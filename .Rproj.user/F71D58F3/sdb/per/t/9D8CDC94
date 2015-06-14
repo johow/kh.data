@@ -1,0 +1,17 @@
+{
+    "contents" : "---\ntitle: \"An Excerpt of the Krummhörn database (version KH33b)\"\nauthor: \"Johannes Johow\"\ndate: \"`r Sys.Date()`\"\noutput: rmarkdown::html_vignette\nvignette: >\n  %\\VignetteIndexEntry{kh33}\n  %\\VignetteEngine{knitr::rmarkdown}\n  %\\VignetteEncoding{UTF-8}\n---\n\nThis short report documents the function `built_kh()` to create a sample from the _Krummhörn_ database in its most recent version (''KH33b'') as well as some  `kinlab::` utilities useful in visualisation and modelling during the ecological analysis of kin networks provided by historical data. It purposes three main goals:\n\n- Create required data structures for given pedigrees\n- Graphical tools to display relatedness, survival and fertility \n- Multistate modelling of individual pedigrees\n\n## Vignette Info\n\n\n## Data Import\n\nThe `built_kh` function is able to compile a given number (`n`) of pedigrees and will save all relevant data to local files. \n\n## Figures\n\n`kinlab::plot_pedigree(x, evdat, ped)` plots the pedigree  pedigree and will save all relevant data to local files. \n\n```{r}\nkh.data::built_kh(\n  source_path = \"/home/johow/Dropbox/db/kh\", \n  local_path=\"/home/johow/tmp/kh.data/data\", \n  n = 32, silent=TRUE, set_seed=13)\n```\n\nYou can enable figure captions by `fig_caption: yes` in YAML:\n\n    output:\n      rmarkdown::html_vignette:\n        fig_caption: yes\n\nThen you can use the chunk option `fig.cap = \"Your figure caption.\"` in **knitr**.\n\n## More Examples\n\nYou can write math expressions, e.g. $Y = X\\beta + \\epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.\n\n```{r, echo=FALSE, results='asis'}\nknitr::kable(head(kh.data::kh_geo[[1]], 10))\n```\n\n\n```{r, echo=FALSE, fig.width=7, fig..height=7}\n\nkinlab::plot_pedigree(as.numeric( names(kh.data::kh_ped)[1]), kinlab::as_date(kh.data::kh_mat[names(kh.data::kh_ped)[1],2,1]), as.data.frame(kh.data::kh_ind),  kh.data::kh_ped[[1]],\nkh.data::kh_mat, cex = 0.2)\n```\n\n\n```{r, echo=FALSE, fig.width=7}\nprint(\nkinlab::plot_kinmap(id=as.numeric( names(kh.data::kh_ped)[1]),\n                      evdat= kinlab::as_date(kh.data::kh_mat[names(kh.data::kh_ped)[1],2,1]),\n                      list_kin=kh.data::kh_kin,\n                      list_geo=kh.data::kh_geo,\n                      my_map=kh.data::kh_geo[[2]][[1]],\n                      spit_results=TRUE,\n                      throw_plots=FALSE))\n```\n\n\n```{r, echo=FALSE, fig.width=7}\n\n\ndf_xs <- data.frame(momid = unique(kh.data::kh_ind$momid[kh.data::kh_ind$momid>0]), tmp = NA)\ndf_xs$twinmother <- ifelse(df_xs$momid %in% kinlab::get_twinmothers(kh.data::kh_ind, var_bdate=\"bdate\", var_mother=\"momid\"), 1, 0)\n\nkinlab::plot_rrv(df=df_xs,\n                 momid = \"momid\",\n                 var=\"twinmother\",\n                 kh.data::kh_ind, kh.data::kh_mat, kh.data::kh_mat,\n                 categories=NULL,\n                 action = \"make.plot\",\n                 y.lim=NULL)\n\n```\n\n",
+    "created" : 1434298461751.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2997362262",
+    "id" : "9D8CDC94",
+    "lastKnownWriteTime" : 1434298535,
+    "path" : "~/tmp/kh.data/vignettes/kh33.Rmd",
+    "project_path" : "vignettes/kh33.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}

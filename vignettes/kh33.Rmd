@@ -1,0 +1,87 @@
+---
+title: "An Excerpt of the Krummhörn database (version KH33b)"
+author: "Johannes Johow"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{kh33}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This short report documents the function `built_kh()` to create a sample from the _Krummhörn_ database in its most recent version (''KH33b'') as well as some  `kinlab::` utilities useful in visualisation and modelling during the ecological analysis of kin networks provided by historical data. It purposes three main goals:
+
+- Create required data structures for given pedigrees
+- Graphical tools to display relatedness, survival and fertility 
+- Multistate modelling of individual pedigrees
+
+## Vignette Info
+
+
+## Data Import
+
+The `built_kh` function is able to compile a given number (`n`) of pedigrees and will save all relevant data to local files. 
+
+## Figures
+
+`kinlab::plot_pedigree(x, evdat, ped)` plots the pedigree  pedigree and will save all relevant data to local files. 
+
+```{r}
+kh.data::built_kh(
+  source_path = "/home/johow/Dropbox/db/kh", 
+  local_path="/home/johow/tmp/kh.data/data", 
+  n = 32, silent=TRUE, set_seed=13)
+```
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(kh.data::kh_geo[[1]], 10))
+```
+
+
+```{r, echo=FALSE, fig.width=7, fig..height=7}
+
+kinlab::plot_pedigree(as.numeric( names(kh.data::kh_ped)[1]), kinlab::as_date(kh.data::kh_mat[names(kh.data::kh_ped)[1],2,1]), as.data.frame(kh.data::kh_ind),  kh.data::kh_ped[[1]],
+kh.data::kh_mat, cex = 0.2)
+```
+
+
+```{r, echo=FALSE, fig.width=7}
+print(
+kinlab::plot_kinmap(id=as.numeric( names(kh.data::kh_ped)[1]),
+                      evdat= kinlab::as_date(kh.data::kh_mat[names(kh.data::kh_ped)[1],2,1]),
+                      list_kin=kh.data::kh_kin,
+                      list_geo=kh.data::kh_geo,
+                      my_map=kh.data::kh_geo[[2]][[1]],
+                      spit_results=TRUE,
+                      throw_plots=FALSE))
+```
+
+
+```{r, echo=FALSE, fig.width=7}
+
+
+df_xs <- data.frame(momid = unique(kh.data::kh_ind$momid[kh.data::kh_ind$momid>0]), tmp = NA)
+df_xs$twinmother <- ifelse(df_xs$momid %in% kinlab::get_twinmothers(kh.data::kh_ind, var_bdate="bdate", var_mother="momid"), 1, 0)
+
+kinlab::plot_rrv(df=df_xs,
+                 momid = "momid",
+                 var="twinmother",
+                 kh.data::kh_ind, kh.data::kh_mat, kh.data::kh_mat,
+                 categories=NULL,
+                 action = "make.plot",
+                 y.lim=NULL)
+
+```
+

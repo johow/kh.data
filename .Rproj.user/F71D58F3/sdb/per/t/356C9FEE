@@ -1,0 +1,17 @@
+{
+    "contents" : "#' Return an individual's sisters being ever born\n#'\n#' This function returns any female indiviual being born from the same mother -- excluding the ID for a given (possibly female) individual.\n#' @param x ID of individual of interest\n#' @param df_ped A dataframe\n#' @keywords pedigree sisters\n#' @export\n#' @examples\n#' \\dontrun{\n#' grap_ped(1067, df_ped)\n#' }\nget_sisters <- function(x, df_ped){\n  if(get_moms(x, df_ped)>0){\n  return(unique(df_ped[!(df_ped$id %in% x) &\n                       df_ped$momid %in% get_moms(x, df_ped) &\n                         df_ped$sex==2, \"id\"]))}\n  else return(NA)\n}\n",
+    "created" : 1434298557033.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3820750709",
+    "id" : "356C9FEE",
+    "lastKnownWriteTime" : 1430590565,
+    "path" : "~/Dropbox/kinlab/R/get_sisters.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
