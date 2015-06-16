@@ -26,7 +26,7 @@ The `built_kh` function is able to compile a given number (`n`) of pedigrees and
 
 `kinlab::plot_pedigree(x, evdat, ped)` plots the pedigree  pedigree and will save all relevant data to local files. 
 
-```{r}
+```{r, echo=FALSE, message=FALSE}
 kh.data::built_kh(
   source_path = "/home/johow/Dropbox/db/kh", 
   local_path="/home/johow/tmp/kh.data/data", 
@@ -50,7 +50,7 @@ knitr::kable(head(kh.data::kh_geo[[1]], 10))
 ```
 
 
-```{r, echo=FALSE, fig.width=7, fig..height=7}
+```{r, echo=FALSE, fig.width=7, fig.height=7}
 
 kinlab::plot_pedigree(as.numeric( names(kh.data::kh_ped)[1]), kinlab::as_date(kh.data::kh_mat[names(kh.data::kh_ped)[1],2,1]), as.data.frame(kh.data::kh_ind),  kh.data::kh_ped[[1]],
 kh.data::kh_mat, cex = 0.2)
@@ -58,26 +58,40 @@ kh.data::kh_mat, cex = 0.2)
 
 
 ```{r, echo=FALSE, fig.width=7}
-print(
+
 kinlab::plot_kinmap(id=as.numeric( names(kh.data::kh_ped)[1]),
                       evdat= kinlab::as_date(kh.data::kh_mat[names(kh.data::kh_ped)[1],2,1]),
                       list_kin=kh.data::kh_kin,
                       list_geo=kh.data::kh_geo,
                       my_map=kh.data::kh_geo[[2]][[1]],
-                      spit_results=TRUE,
-                      throw_plots=FALSE))
+                      spit_results=FALSE,
+                      throw_plots=TRUE)
 ```
 
 
-```{r, echo=FALSE, fig.width=7}
+```{r, echo=FALSE}
 
 
-df_xs <- data.frame(momid = unique(kh.data::kh_ind$momid[kh.data::kh_ind$momid>0]), tmp = NA)
-df_xs$twinmother <- ifelse(df_xs$momid %in% kinlab::get_twinmothers(kh.data::kh_ind, var_bdate="bdate", var_mother="momid"), 1, 0)
+df_geo2 <- kh.data::kh_geo[[1]]
+df_geo2$coastal <- factor(ifelse(df_geo2$label %in%
+                            c("RY", "LO", "CA", "UP", "HW", "GH", "WO", "MA", "MW", "NE", "PI", "GS"),
+                          "coastal", "hinterland"))
+ggmap::ggmap(kh.data::kh_geo[[2]][[2]]) +
+ggplot2::geom_text(ggplot2::aes(x=lon, y = lat, label = label,
+                                colour = coastal), df_geo2)
 
-kinlab::plot_rrv(df=df_xs,
+
+
+df_test <- merge(kh.data::kh_ind[kh.data::kh_ind$bplace %in% df_geo2$label &
+  kh.data::kh_ind$momid>0 & !duplicated(kh.data::kh_ind$momid),
+                c("momid", "bplace")], data.frame(bplace=df_geo2$label,
+                                                  coastal=df_geo2$coastal), by = "bplace", all.x=TRUE)
+
+
+
+kinlab::plot_rrv(df=df_test,
                  momid = "momid",
-                 var="twinmother",
+                 var="coastal",
                  kh.data::kh_ind, kh.data::kh_mat, kh.data::kh_mat,
                  categories=NULL,
                  action = "make.plot",
