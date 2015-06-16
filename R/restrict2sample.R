@@ -7,7 +7,6 @@
 #' @param array_mat TBD
 #' @param list_src TBD
 #' @param df_twn TBD
-#' @param
 #' @keywords kh sample size
 #' @export
 #' @examples
@@ -25,6 +24,13 @@ restrict2sample <- function(df_evn=NULL,
  included_id <- as.numeric(unlist(lapply(list_kin, lapply, "[[", 1)))
  df_evn <- subset(df_evn, id %in% included_id)
  df_ind <- subset(df_ind, id %in% included_id)
+
+ df_ind$momid <- ifelse(df_ind$momid %in% df_ind$id, df_ind$momid, 0)
+ df_ind$dadid <- ifelse(df_ind$dadid %in% df_ind$id, df_ind$dadid, 0)
+ while(any((df_ind$dadid== 0 & df_ind$momid >0)| (df_ind$momid== 0 & df_ind$dadid >0))){
+   df_ind$momid <- ifelse(df_ind$dadid > 0, df_ind$momid, 0)
+   df_ind$dadid <- ifelse(df_ind$momid > 0, df_ind$dadid, 0)
+ }
  array_mat <- array_mat[paste(included_id),,]
  list_src[[1]] <- subset(list_src[[1]],  id %in% included_id)
  list_src[[2]] <- subset(list_src[[2]], doc %in% list_src[[1]]$doc |
